@@ -322,8 +322,8 @@ render the universe into, just above the `<script>` tag:
 
 ```html
 <body>
-  <pre id="game-of-life-canvas"></pre>
-  <script src="./bootstrap.js"></script>
+  <pre id="game-of-life-canvas"></pre> 
+  <!-- remove other lines from body -->
 </body>
 ```
 
@@ -358,7 +358,7 @@ Also, let's get that `<pre>` element we just added and instantiate a new
 universe:
 
 ```js
-const pre = document.getElementById("game-of-life-canvas");
+const pre = document.getElementById("game-of-life-canvas")!;
 const universe = Universe.new();
 ```
 
@@ -411,7 +411,6 @@ earlier with a `<canvas>` we will render into (it too should be within the
 ```html
 <body>
   <canvas id="game-of-life-canvas"></canvas>
-  <script src='./bootstrap.js'></script>
 </body>
 ```
 
@@ -464,7 +463,10 @@ const height = universe.height();
 
 // Give the canvas room for all of our cells and a 1px border
 // around each of them.
-const canvas = document.getElementById("game-of-life-canvas");
+const canvas = document.getElementById("game-of-life-canvas")!;
+if (!(canvas instanceof HTMLCanvasElement)) {
+    throw new Error("Expected #game-of-life-canvas to be a <canvas> element.");
+}
 canvas.height = (CELL_SIZE + 1) * height + 1;
 canvas.width = (CELL_SIZE + 1) * width + 1;
 
@@ -515,13 +517,11 @@ tick.
 
 ```js
 // Import the WebAssembly memory at the top of the file.
-import { memory } from "wasm-game-of-life/wasm_game_of_life_bg";
+import { memory } from "wasm-game-of-life/wasm_game_of_life_bg.wasm";
 
 // ...
 
-const getIndex = (row, column) => {
-  return row * width + column;
-};
+const getIndex = (row: number, column: number): number => row * width + column;
 
 const drawCells = () => {
   const cellsPtr = universe.cells();
@@ -554,9 +554,14 @@ To start the rendering process, we'll use the same code as above to start the
 first iteration of the rendering loop:
 
 ```js
-drawGrid();
-drawCells();
-requestAnimationFrame(renderLoop);
+const renderLoop = () => {
+    drawGrid();
+    drawCells();
+    universe.tick();
+    requestAnimationFrame(renderLoop);
+};
+
+renderLoop();
 ```
 
 Note that we call `drawGrid()` and `drawCells()` here _before_ we call
@@ -579,7 +584,7 @@ Make sure your development server is still running. If it isn't, start it again
 from within the `wasm-game-of-life/www` directory:
 
 ```
-npm run start
+npm run serve
 ```
 
 If you refresh [http://localhost:8080/](http://localhost:8080/), you should be

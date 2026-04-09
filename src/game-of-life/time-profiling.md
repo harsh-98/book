@@ -15,6 +15,9 @@ We start by adding an `fps` object to `wasm-game-of-life/www/index.js`:
 
 ```js
 const fps = new class {
+    fps: any;
+    frames: Array<number>;
+    lastFrameTimeStamp: number;
   constructor() {
     this.fps = document.getElementById("fps");
     this.frames = [];

@@ -36,7 +36,7 @@ by `requestAnimationFrame`. When there is no queued animation frame, we set this
 variable to `null`.
 
 ```js
-let animationId = null;
+let animationId: number | null = null;
 
 // This function is the same as before, except the
 // result of `requestAnimationFrame` is assigned to
@@ -56,7 +56,7 @@ inspecting the value of `animationId`:
 
 ```js
 const isPaused = () => {
-  return animationId === null;
+    return animationId === null;
 };
 ```
 
